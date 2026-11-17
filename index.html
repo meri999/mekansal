@@ -63,7 +63,8 @@ button,select{font:inherit;color:inherit}
 .vur .kk.ayr.aktif{box-shadow:0 0 0 2px var(--vurgu) inset}
 .k-ayr{display:none;font-size:11.5px;color:var(--bordo);font-weight:700;margin-top:2px}
 .vur .kk.ayr .k-ayr{display:block}
-.vurgu-sec{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--soluk);margin:0 0 12px;flex-wrap:wrap}
+.vurgu-sec{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--soluk);margin:0;cursor:pointer}
+.baslik{margin-bottom:12px}
 .vurgu-sec input{accent-color:var(--vurgu)}
 .vurgu-sec .ornek{display:inline-block;width:26px;height:14px;border:1.5px solid var(--bordo);background:#fbeeef;border-radius:4px;vertical-align:-3px}
 .k-baslik{font-size:12.5px;color:var(--soluk);line-height:1.25;min-height:2.5em}
@@ -104,8 +105,8 @@ button,select{font:inherit;color:inherit}
     <div class="not-harita" id="notHarita"></div>
   </section>
   <section class="panel" aria-live="polite" aria-label="Seçili yer göstergeleri">
-    <div class="baslik"><h1 id="yerAd"></h1><span id="yerAlt"></span><button class="geri" id="geri" hidden>Türkiye'ye dön</button></div>
-    <label class="vurgu-sec"><input type="checkbox" id="vurguAc" checked><span class="ornek"></span><span>Ortalamadan belirgin ayrışanları işaretle <span style="color:#8a97a1">(aynı düzeydeki yerlerin ortalamasından 1,5 standart sapma veya daha fazla uzaklık; büyüklüğe bağlı sayılar dışında)</span></span></label>
+    <div class="baslik"><h1 id="yerAd"></h1><span id="yerAlt"></span><button class="geri" id="geri" hidden>Türkiye'ye dön</button>
+      <label class="vurgu-sec" title="Aynı düzeydeki yerlerin ortalamasından 1,5 standart sapma veya daha fazla uzaktaki göstergeler işaretlenir. Nüfus gibi büyüklüğe bağlı sayılar dışarıda tutulur."><input type="checkbox" id="vurguAc" checked><span class="ornek"></span><span>Ortalamadan belirgin ayrışanları işaretle</span></label></div>
     <div id="kutular"></div>
   </section>
 </main>
