@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mekansal Ayrışma Portalı</title>
+<meta name="description" content="Türkiye'de il ve bölge düzeyinde nüfus, aile, ekonomi ve eğitim göstergeleri. Kaynak: TÜİK.">
+<style>
+:root{--zemin:#f3f5f7;--kart:#ffffff;--yazi:#16222b;--soluk:#52616b;--cizgi:#e3e8ec;--vurgu:#0f8b8d;--vurgu-koyu:#0b6b6d;--vurgu-acik:#e4f3f3;--iyi:#1f8a5b;--kotu:#c0392b;--notr:#6b7a85;--bos:#e9edf0}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--zemin);color:var(--yazi);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size:15px;line-height:1.45}
+button,select{font:inherit;color:inherit}
+.ust{background:var(--kart);border-bottom:1px solid var(--cizgi);position:sticky;top:0;z-index:20}
+.ust-ic{max-width:1320px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.marka{font-weight:600;font-size:16px;display:flex;align-items:center;gap:8px;margin-right:6px;white-space:nowrap}
+.marka i{width:10px;height:10px;border-radius:50%;background:var(--vurgu);display:inline-block}
+.konular{display:flex;gap:6px;flex-wrap:wrap}
+.konu{border:0;background:transparent;color:var(--soluk);padding:6px 14px;border-radius:16px;cursor:pointer;font-size:14px}
+.konu:hover{background:var(--zemin)}
+.konu[aria-pressed="true"]{background:var(--vurgu);color:#fff}
+.ara{margin-left:auto}
+.ara select{border:1px solid var(--cizgi);background:var(--kart);border-radius:8px;padding:6px 10px;min-width:190px}
+:focus-visible{outline:2px solid var(--vurgu);outline-offset:2px}
+.ana{max-width:1320px;margin:0 auto;padding:16px;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:16px;align-items:start}
+.panel{background:var(--kart);border-radius:12px;padding:14px 16px}
+.harita-kart{position:sticky;top:64px}
+.kontrol{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+.kontrol select{flex:1 1 200px;min-width:0;border:1px solid var(--cizgi);background:var(--kart);border-radius:8px;padding:6px 8px}
+.duzey{display:inline-flex;border:1px solid var(--cizgi);border-radius:8px;overflow:hidden}
+.duzey button{border:0;background:var(--kart);padding:6px 12px;cursor:pointer;font-size:13px;color:var(--soluk)}
+.duzey button[aria-pressed="true"]{background:var(--vurgu-acik);color:var(--vurgu-koyu);font-weight:600}
+.yil{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--soluk);margin:8px 0 2px}
+.yil input{flex:1;accent-color:var(--vurgu)}
+.yil b{color:var(--yazi);min-width:3.2em;text-align:right}
+#harita{position:relative}
+#harita svg{width:100%;height:auto;display:block}
+#harita path{stroke:#fff;stroke-width:.6;cursor:pointer;transition:fill .15s}
+#harita path:hover{stroke:var(--yazi);stroke-width:1.2}
+#harita path.sec{stroke:var(--yazi);stroke-width:1.8}
+.ipucu{position:fixed;pointer-events:none;background:var(--yazi);color:#fff;padding:5px 9px;border-radius:6px;font-size:12.5px;z-index:50;display:none;white-space:nowrap}
+.lejant{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--soluk);margin-top:6px;flex-wrap:wrap}
+.lejant .kutu{display:inline-flex}
+.lejant .kutu span{width:22px;height:10px;display:block}
+.not-harita{font-size:12.5px;color:var(--soluk);margin-top:6px}
+.baslik{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:0 0 12px}
+.baslik h1{font-size:20px;margin:0;font-weight:600}
+.baslik span{font-size:13px;color:var(--soluk)}
+.geri{border:1px solid var(--cizgi);background:var(--kart);border-radius:8px;padding:3px 10px;font-size:12.5px;cursor:pointer;color:var(--soluk)}
+.grup{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--soluk);margin:16px 0 6px;font-weight:600}
+.grup:first-of-type{margin-top:0}
+.kutular{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+.kk{background:var(--kart);border:1px solid var(--cizgi);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:2px;cursor:pointer;text-align:left;transition:border-color .15s,box-shadow .15s}
+.kk:hover{border-color:var(--vurgu)}
+.kk.aktif{border-color:var(--vurgu);box-shadow:0 0 0 1px var(--vurgu) inset}
+.vur .kk.ayr{border-color:#d9534f;background:#fff4f3}
+.vur .kk.ayr:hover{border-color:#b83a36}
+.vur .kk.ayr.aktif{box-shadow:0 0 0 2px var(--vurgu) inset}
+.k-ayr{display:none;font-size:11.5px;color:#a8322d;font-weight:600;margin-top:2px}
+.vur .kk.ayr .k-ayr{display:block}
+.vurgu-sec{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--soluk);margin:0 0 12px;flex-wrap:wrap}
+.vurgu-sec input{accent-color:var(--vurgu)}
+.vurgu-sec .ornek{display:inline-block;width:26px;height:14px;border:1.5px solid #d9534f;background:#fff4f3;border-radius:4px;vertical-align:-3px}
+.k-baslik{font-size:12.5px;color:var(--soluk);line-height:1.25;min-height:2.5em}
+.k-deger{font-size:22px;font-weight:600;line-height:1.15;margin-top:2px}
+.k-deger small{font-size:12px;font-weight:400;color:var(--soluk);margin-left:4px}
+.k-donem{align-self:flex-start;font-size:11.5px;color:var(--vurgu-koyu);background:var(--vurgu-acik);border-radius:10px;padding:0 8px;margin:3px 0}
+.k-deg{font-size:12px}
+.k-deg.iyi{color:var(--iyi)}.k-deg.kotu{color:var(--kotu)}.k-deg.notr{color:var(--notr)}
+.k-kars{font-size:12px;color:var(--soluk)}
+.k-sira{font-size:12px;color:var(--soluk)}
+.spark{width:100%;height:26px;margin-top:4px;color:var(--vurgu)}
+.k-kaynak{font-size:11px;color:#8a97a1;margin-top:3px;line-height:1.25}
+.bos{padding:20px 4px;color:var(--soluk)}
+.alt{max-width:1320px;margin:0 auto;padding:6px 16px 28px;font-size:12.5px;color:var(--soluk)}
+.alt a{color:var(--vurgu-koyu)}
+@media(max-width:920px){.ana{grid-template-columns:minmax(0,1fr)}.harita-kart{position:static}.ara{margin-left:0;width:100%}.ara select{width:100%}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="ust"><div class="ust-ic">
+  <div class="marka"><i></i>Mekansal Ayrışma Portalı</div>
+  <nav class="konular" id="konular" aria-label="Konu başlıkları"></nav>
+  <div class="ara"><label for="yerSec" class="sr" style="position:absolute;left:-9999px">İl veya bölge seç</label><select id="yerSec"></select></div>
+</div></header>
+
+<main class="ana">
+  <section class="panel harita-kart" aria-label="Harita">
+    <div class="kontrol">
+      <div class="duzey" role="group" aria-label="Harita düzeyi">
+        <button id="dzIl" aria-pressed="true">81 il</button><button id="dzBolge" aria-pressed="false">12 bölge</button>
+      </div>
+      <select id="gosterge" aria-label="Haritada gösterilen gösterge"></select>
+    </div>
+    <div id="harita" role="group" aria-label="Türkiye haritası"></div>
+    <div class="yil"><span>Yıl</span><input type="range" id="yilKayar" min="0" max="0" step="1" aria-label="Yıl"><b id="yilYazi"></b></div>
+    <div class="lejant" id="lejant"></div>
+    <div class="not-harita" id="notHarita"></div>
+  </section>
+  <section class="panel" aria-live="polite" aria-label="Seçili yer göstergeleri">
+    <div class="baslik"><h1 id="yerAd"></h1><span id="yerAlt"></span><button class="geri" id="geri" hidden>Türkiye'ye dön</button></div>
+    <label class="vurgu-sec"><input type="checkbox" id="vurguAc" checked><span class="ornek"></span><span>Ortalamadan belirgin ayrışanları işaretle <span style="color:#8a97a1">(aynı düzeydeki yerlerin ortalamasından 1,5 standart sapma veya daha fazla uzaklık; büyüklüğe bağlı sayılar dışında)</span></span></label>
+    <div id="kutular"></div>
+  </section>
+</main>
+<footer class="alt" id="alt"></footer>
+<div class="ipucu" id="ipucu"></div>
+
+<script src="veri/veri.js"></script>
+<script src="veri/harita_il.js"></script>
+<script src="veri/harita_bolge.js"></script>
+<script>
+(function(){
+var G=VERI.gostergeler, YER={}, KONULAR=[["nufus","Nüfus ve yapı"],["aile","Aile"],["ekonomi","Ekonomi ve girişim"],["egitim","Eğitim ve kalkınma"]];
+VERI.yerler.forEach(function(y){YER[y.kod]=y});
+YER.TR=YER.TR||{kod:"TR",ad_tr:"Türkiye",duzey:"ulke"};
+var RENK=["#d9eeee","#a9d8d9","#6fbcbe","#2f9a9d","#0b6b6d"];
+var st={konu:"nufus",gid:null,yil:0,duzey:"il",sec:"TR"};
+var $=function(i){return document.getElementById(i)};
+function fmt(x,d){return x==null?"–":x.toLocaleString("tr-TR",{minimumFractionDigits:d,maximumFractionDigits:d})}
+function gOf(id){for(var i=0;i<G.length;i++)if(G[i].id===id)return G[i]}
+function konuG(k){return G.filter(function(g){return g.konu===k})}
+function v(g,kod,i){var a=g.veri[kod];return a?a[i]:null}
+function son(g,kod){var a=g.veri[kod];if(!a)return -1;for(var i=a.length-1;i>=0;i--)if(a[i]!=null)return i;return -1}
+function onceki(g,kod,i){var a=g.veri[kod];for(var j=i-1;j>=0;j--)if(a[j]!=null)return j;return -1}
+function ilKodlari(){return Object.keys(YER).filter(function(k){return YER[k].duzey==="il"})}
+function kodlar(duzey){return Object.keys(YER).filter(function(k){return YER[k].duzey===(duzey==="il"?"il":"bolge")})}
+
+/* ---- harita ---- */
+var geo={il:HARITA_IL,bolge:HARITA_BOLGE}, kutuTum=null, yol={};
+function projeAyar(){var mn=[1e9,1e9],mx=[-1e9,-1e9],k=Math.cos(39*Math.PI/180);
+  function gez(c){if(typeof c[0]==="number"){var x=c[0]*k,y=-c[1];mn[0]=Math.min(mn[0],x);mx[0]=Math.max(mx[0],x);mn[1]=Math.min(mn[1],y);mx[1]=Math.max(mx[1],y)}else c.forEach(gez)}
+  geo.il.features.forEach(function(f){gez(f.geometry.coordinates)});
+  var w=mx[0]-mn[0],h=mx[1]-mn[1],s=1000/w;return {k:k,mn:mn,s:s,w:1000,h:h*s}}
+var P=projeAyar();
+function yolOlustur(f){var d="";var polys=f.geometry.type==="Polygon"?[f.geometry.coordinates]:f.geometry.coordinates;
+  polys.forEach(function(p){p.forEach(function(r){r.forEach(function(c,i){var x=(c[0]*P.k-P.mn[0])*P.s,y=(-c[1]-P.mn[1])*P.s;d+=(i?"L":"M")+x.toFixed(1)+" "+y.toFixed(1)});d+="Z"})});return d}
+function haritaCiz(duzey){var s='<svg viewBox="0 0 '+P.w+' '+P.h.toFixed(0)+'" role="img" aria-label="Türkiye '+(duzey==="il"?"il":"bölge")+' haritası">';
+  geo[duzey].features.forEach(function(f){var k=f.properties.kod;s+='<path d="'+yolOlustur(f)+'" data-k="'+k+'" tabindex="0" role="button" aria-label="'+(YER[k]?YER[k].ad_tr:k)+'" fill="#e9edf0"></path>'});
+  $("harita").innerHTML=s+"</svg>";
+  var ip=$("ipucu");
+  $("harita").querySelectorAll("path").forEach(function(p){
+    p.addEventListener("click",function(){sec(p.dataset.k)});
+    p.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();sec(p.dataset.k)}});
+    p.addEventListener("mousemove",function(e){var g=gOf(st.gid),k=p.dataset.k,x=g?v(g,k,st.yil):null;
+      ip.style.display="block";ip.style.left=(e.clientX+14)+"px";ip.style.top=(e.clientY+14)+"px";
+      ip.textContent=YER[k].ad_tr+" · "+(x==null?"veri yok":fmt(x,g.ondalik)+" "+g.birim)});
+    p.addEventListener("mouseleave",function(){ip.style.display="none"})})}
+function boya(){var g=gOf(st.gid),kk=kodlar(st.duzey),vals=[],pa=$("harita").querySelectorAll("path");
+  kk.forEach(function(k){var x=v(g,k,st.yil);if(x!=null)vals.push(x)});
+  vals.sort(function(a,b){return a-b});
+  var esik=[];for(var i=1;i<5;i++)esik.push(vals.length?vals[Math.min(vals.length-1,Math.floor(vals.length*i/5))]:0);
+  pa.forEach(function(p){var x=v(g,p.dataset.k,st.yil),c="#e9edf0";
+    if(x!=null){var n=0;while(n<4&&x>=esik[n])n++;c=RENK[n]}
+    p.setAttribute("fill",c);p.classList.toggle("sec",p.dataset.k===st.sec)});
+  var L=$("lejant");
+  if(!vals.length){L.innerHTML="";$("notHarita").textContent="Bu gösterge "+(st.duzey==="il"?"il":"bölge")+" düzeyinde yayımlanmıyor. Diğer düzeye geçmeyi deneyin."}
+  else{L.innerHTML='<span>'+fmt(vals[0],g.ondalik)+'</span><span class="kutu">'+RENK.map(function(c){return '<span style="background:'+c+'"></span>'}).join("")+'</span><span>'+fmt(vals[vals.length-1],g.ondalik)+' '+g.birim+'</span><span>· '+vals.length+' '+(st.duzey==="il"?"il":"bölge")+', beşli eşit sayılı sınıflar</span>';
+    $("notHarita").textContent=g.not||""}}
+
+/* ---- kutular ---- */
+function sparkSvg(a,i){var y=a.slice(0,i+1).filter(function(x){return x!=null}).slice(-15);if(y.length<2)return "";
+  var mn=Math.min.apply(null,y),mx=Math.max.apply(null,y);if(mx===mn){mn-=1;mx+=1}
+  var w=120,h=26,pts=y.map(function(q,j){return (2+j*(w-4)/(y.length-1)).toFixed(1)+","+(h-3-(q-mn)/(mx-mn)*(h-6)).toFixed(1)});
+  var son=pts[pts.length-1].split(",");
+  return '<svg class="spark" viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none" aria-hidden="true"><polyline points="'+pts.join(" ")+'" fill="none" stroke="currentColor" stroke-width="1.6" vector-effect="non-scaling-stroke"/><circle cx="'+son[0]+'" cy="'+son[1]+'" r="2.3" fill="currentColor"/></svg>'}
+function degisim(g,a,b){if(a==null||b==null)return "";var d=a-b,t,r;
+  if(g.degisim==="puan"){r=Math.round(d*10)/10;t=(r>0?"+":r<0?"−":"")+fmt(Math.abs(r),1)+" puan"}
+  else if(g.degisim==="fark"){var dd=Math.max(1,g.ondalik);r=Math.round(d*Math.pow(10,dd))/Math.pow(10,dd);t=(r>0?"+":r<0?"−":"")+fmt(Math.abs(r),dd)}
+  else{if(b===0)return "";var p=(a/b-1)*100;r=Math.round(p*10)/10;t=(r>0?"+":r<0?"−":"")+fmt(Math.abs(r),1)+"%"}
+  var c=(r===0||g.iyi==="notr")?"notr":((r>0)===(g.iyi==="yukari")?"iyi":"kotu"),ok=r===0?"▬":r>0?"▲":"▼";
+  return '<div class="k-deg '+c+'">'+ok+" "+t+' <span style="color:#8a97a1">önceki yıl</span></div>'}
+function sira(g,kod,i){if(YER[kod].duzey!=="il")return "";var x=v(g,kod,i);if(x==null)return "";var n=0,r=1;
+  ilKodlari().forEach(function(k){var q=v(g,k,i);if(q!=null){n++;if(q>x)r++}});return n?'<div class="k-sira">'+n+' il içinde '+r+'. sırada <span style="color:#8a97a1">(yüksekten)</span></div>':""}
+function ayrisma(g,kod,i){if(g.ayrisma!=="evet"||YER[kod].duzey==="ulke")return null;var x=v(g,kod,i);if(x==null)return null;
+  var kk=kodlar(YER[kod].duzey==="il"?"il":"bolge"),a=[];kk.forEach(function(k){var q=v(g,k,i);if(q!=null)a.push(q)});if(a.length<8)return null;
+  var m=a.reduce(function(s,q){return s+q},0)/a.length,sd=Math.sqrt(a.reduce(function(s,q){return s+(q-m)*(q-m)},0)/(a.length-1));if(!sd)return null;
+  var z=(x-m)/sd;return Math.abs(z)>=1.5?{z:z,m:m}:null}
+function kutularCiz(){var kod=st.sec,gs=konuG(st.konu).filter(function(g){return son(g,kod)>=0}),h="",grup=null;
+  var y=YER[kod];$("yerAd").textContent=y.ad_tr;
+  $("yerAlt").textContent=y.duzey==="il"?"il":y.duzey==="bolge"?"İBBS-1 bölgesi":"ülke geneli";
+  $("geri").hidden=kod==="TR";
+  if(!gs.length){$("kutular").innerHTML='<div class="bos">'+y.ad_tr+' için bu konuda yayımlanan gösterge yok. İl veya Türkiye düzeyini seçin.</div>';return}
+  gs.forEach(function(g){var i=son(g,kod);
+    if(g.grup!==grup){if(grup!==null)h+="</div>";grup=g.grup;h+='<div class="grup">'+grup+'</div><div class="kutular">'}
+    var tr=kod!=="TR"?v(g,"TR",i):null;
+    var ay=ayrisma(g,kod,i),bd=YER[kod].duzey==="il"?"il":"bölge";
+    h+='<button class="kk'+(g.id===st.gid?" aktif":"")+(ay?" ayr":"")+'" data-g="'+g.id+'" title="'+g.kaynak+' — haritada göster">'+
+      '<div class="k-baslik">'+g.baslik+'</div><div class="k-deger">'+fmt(v(g,kod,i),g.ondalik)+'<small>'+g.birim+'</small></div>'+
+      '<span class="k-donem">'+g.yillar[i]+'</span>'+
+      (ay?'<div class="k-ayr">'+(ay.z>0?"▲ ":"▼ ")+bd+' ortalamasının '+(ay.z>0?"çok üstünde":"çok altında")+' (ort. '+fmt(ay.m,g.ondalik)+')</div>':"")+degisim(g,v(g,kod,i),(function(j){return j>=0?v(g,kod,j):null})(onceki(g,kod,i)))+
+      (tr!=null?'<div class="k-kars">Türkiye: '+fmt(tr,g.ondalik)+'</div>':"")+sira(g,kod,i)+sparkSvg(g.veri[kod],i)+
+      '<div class="k-kaynak">'+g.kaynak+'</div></button>'});
+  $("kutular").innerHTML=h+"</div>";
+  $("kutular").querySelectorAll(".kk").forEach(function(b){b.addEventListener("click",function(){gosterge(b.dataset.g)})})}
+
+/* ---- durum ---- */
+function sec(k){st.sec=k;if(YER[k].duzey==="il"&&st.duzey!=="il")dzDegis("il");else if(YER[k].duzey==="bolge"&&st.duzey!=="bolge")dzDegis("bolge");
+  $("yerSec").value=k;boya();kutularCiz()}
+function yilAyar(){var g=gOf(st.gid),kk=kodlar(st.duzey),en=0;
+  for(var i=g.yillar.length-1;i>=0;i--){var n=0;kk.forEach(function(k){if(v(g,k,i)!=null)n++});if(n>=kk.length*0.6){en=i;break}}
+  $("yilKayar").max=g.yillar.length-1;if(st.yil>g.yillar.length-1||st.yil<0)st.yil=en}
+function gosterge(id,yilSifirla){st.gid=id;var g=gOf(id);$("gosterge").value=id;
+  var kk=kodlar(st.duzey),en=g.yillar.length-1;
+  for(var i=g.yillar.length-1;i>=0;i--){var n=0;kk.forEach(function(k){if(v(g,k,i)!=null)n++});if(n>=kk.length*0.6){en=i;break}}
+  st.yil=en;$("yilKayar").max=g.yillar.length-1;$("yilKayar").value=st.yil;$("yilYazi").textContent=g.yillar[st.yil];boya();
+  document.querySelectorAll(".kk").forEach(function(b){b.classList.toggle("aktif",b.dataset.g===id)})}
+function dzDegis(d){st.duzey=d;$("dzIl").setAttribute("aria-pressed",d==="il");$("dzBolge").setAttribute("aria-pressed",d==="bolge");
+  if(YER[st.sec].duzey!=="ulke"&&YER[st.sec].duzey!==(d==="il"?"il":"bolge"))st.sec="TR";
+  haritaCiz(d);gosterge(st.gid);$("yerSec").value=st.sec;kutularCiz()}
+function konuDegis(k){st.konu=k;document.querySelectorAll(".konu").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.k===k)});
+  var gs=konuG(k);$("gosterge").innerHTML=gs.map(function(g){return '<option value="'+g.id+'">'+g.baslik+'</option>'}).join("");
+  st.gid=gs[0].id;gosterge(st.gid);kutularCiz()}
+
+/* ---- baslat ---- */
+$("konular").innerHTML=KONULAR.map(function(k){return '<button class="konu" data-k="'+k[0]+'" aria-pressed="false">'+k[1]+'</button>'}).join("");
+document.querySelectorAll(".konu").forEach(function(b){b.addEventListener("click",function(){konuDegis(b.dataset.k)})});
+var ad=function(a,b){return YER[a].ad_tr.localeCompare(YER[b].ad_tr,"tr")};
+$("yerSec").innerHTML='<option value="TR">Türkiye (geneli)</option><optgroup label="Bölgeler (İBBS-1)">'+kodlar("bolge").sort(ad).map(function(k){return '<option value="'+k+'">'+YER[k].ad_tr+' bölgesi</option>'}).join("")+'</optgroup><optgroup label="İller">'+kodlar("il").sort(ad).map(function(k){return '<option value="'+k+'">'+YER[k].ad_tr+'</option>'}).join("")+'</optgroup>';
+$("yerSec").addEventListener("change",function(){sec(this.value)});
+$("gosterge").addEventListener("change",function(){gosterge(this.value)});
+$("yilKayar").addEventListener("input",function(){st.yil=+this.value;$("yilYazi").textContent=gOf(st.gid).yillar[st.yil];boya()});
+$("dzIl").addEventListener("click",function(){dzDegis("il")});$("dzBolge").addEventListener("click",function(){dzDegis("bolge")});
+$("geri").addEventListener("click",function(){sec("TR")});
+$("vurguAc").addEventListener("change",function(){$("kutular").classList.toggle("vur",this.checked)});$("kutular").classList.add("vur");
+$("alt").innerHTML='Kaynak: <a href="https://veriportali.tuik.gov.tr" rel="noopener">TÜİK Veri Portalı</a> (SDMX API). Sınırlar: <a href="https://github.com/htastan/TRmaps" rel="noopener">TRmaps</a> (MIT). Veri üretimi: '+VERI.uretim+'. "Hesaplanmış" etiketli göstergeler TÜİK tarafından yayımlanmaz, ilgili tablolardan türetilir.';
+haritaCiz("il");konuDegis("nufus");
+})();
+</script>
+</body>
+</html>
