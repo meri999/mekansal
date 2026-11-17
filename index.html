@@ -5,25 +5,30 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Mekansal Ayrışma Portalı</title>
 <meta name="description" content="Türkiye'de il ve bölge düzeyinde nüfus, aile, ekonomi ve eğitim göstergeleri. Kaynak: TÜİK.">
+<meta name="theme-color" content="#d8232a">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&family=Roboto+Slab:wght@700&display=swap" rel="stylesheet">
 <style>
-:root{--zemin:#f3f5f7;--kart:#ffffff;--yazi:#16222b;--soluk:#52616b;--cizgi:#e3e8ec;--vurgu:#0f8b8d;--vurgu-koyu:#0b6b6d;--vurgu-acik:#e4f3f3;--iyi:#1f8a5b;--kotu:#c0392b;--notr:#6b7a85;--bos:#e9edf0}
+:root{--zemin:#f6f6f6;--kart:#ffffff;--yazi:#1d1d1d;--soluk:#666666;--cizgi:#e2e2e2;--vurgu:#d8232a;--vurgu-koyu:#b81d24;--vurgu-acik:#fbeaea;--bordo:#7b0828;--iyi:#1f8a5b;--kotu:#b42318;--notr:#6b6b6b;--bos:#ececec;--slab:"Roboto Slab","Rockwell","Georgia",serif;--mont:"Montserrat",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--zemin);color:var(--yazi);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size:15px;line-height:1.45}
 button,select{font:inherit;color:inherit}
-.ust{background:var(--kart);border-bottom:1px solid var(--cizgi);position:sticky;top:0;z-index:20}
+.ust{background:var(--kart);border-bottom:2px solid var(--vurgu);position:sticky;top:0;z-index:20}
 .ust-ic{max-width:1320px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
-.marka{font-weight:600;font-size:16px;display:flex;align-items:center;gap:8px;margin-right:6px;white-space:nowrap}
-.marka i{width:10px;height:10px;border-radius:50%;background:var(--vurgu);display:inline-block}
+.marka{font-family:var(--slab);font-weight:700;font-size:17px;display:flex;align-items:center;gap:10px;margin-right:8px;white-space:nowrap}
+.marka .kare{display:inline-flex;gap:3px}
+.marka i{width:11px;height:11px;border-radius:3px;background:var(--vurgu);display:block}
+.marka i.b{background:var(--bordo)}
 .konular{display:flex;gap:6px;flex-wrap:wrap}
-.konu{border:0;background:transparent;color:var(--soluk);padding:6px 14px;border-radius:16px;cursor:pointer;font-size:14px}
-.konu:hover{background:var(--zemin)}
+.konu{font-family:var(--mont);font-weight:500;border:0;background:transparent;color:var(--soluk);padding:6px 14px;border-radius:16px;cursor:pointer;font-size:13.5px}
+.konu:hover{background:#f1f1f1}
 .konu[aria-pressed="true"]{background:var(--vurgu);color:#fff}
 .ara{margin-left:auto}
 .ara select{border:1px solid var(--cizgi);background:var(--kart);border-radius:8px;padding:6px 10px;min-width:190px}
 :focus-visible{outline:2px solid var(--vurgu);outline-offset:2px}
 .ana{max-width:1320px;margin:0 auto;padding:16px;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:16px;align-items:start}
-.panel{background:var(--kart);border-radius:12px;padding:14px 16px}
+.panel{background:var(--kart);border:1px solid var(--cizgi);border-radius:12px;padding:14px 16px}
 .harita-kart{position:sticky;top:64px}
 .kontrol{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
 .kontrol select{flex:1 1 200px;min-width:0;border:1px solid var(--cizgi);background:var(--kart);border-radius:8px;padding:6px 8px}
@@ -44,25 +49,25 @@ button,select{font:inherit;color:inherit}
 .lejant .kutu span{width:22px;height:10px;display:block}
 .not-harita{font-size:12.5px;color:var(--soluk);margin-top:6px}
 .baslik{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:0 0 12px}
-.baslik h1{font-size:20px;margin:0;font-weight:600}
+.baslik h1{font-family:var(--slab);font-size:21px;margin:0;font-weight:700;color:var(--vurgu)}
 .baslik span{font-size:13px;color:var(--soluk)}
 .geri{border:1px solid var(--cizgi);background:var(--kart);border-radius:8px;padding:3px 10px;font-size:12.5px;cursor:pointer;color:var(--soluk)}
-.grup{font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--soluk);margin:16px 0 6px;font-weight:600}
+.grup{font-family:var(--mont);font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--bordo);margin:16px 0 6px;font-weight:700}
 .grup:first-of-type{margin-top:0}
 .kutular{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
 .kk{background:var(--kart);border:1px solid var(--cizgi);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:2px;cursor:pointer;text-align:left;transition:border-color .15s,box-shadow .15s}
 .kk:hover{border-color:var(--vurgu)}
 .kk.aktif{border-color:var(--vurgu);box-shadow:0 0 0 1px var(--vurgu) inset}
-.vur .kk.ayr{border-color:#d9534f;background:#fff4f3}
-.vur .kk.ayr:hover{border-color:#b83a36}
+.vur .kk.ayr{border:1.5px solid var(--bordo);background:#fbeeef}
+.vur .kk.ayr:hover{border-color:#4f051a}
 .vur .kk.ayr.aktif{box-shadow:0 0 0 2px var(--vurgu) inset}
-.k-ayr{display:none;font-size:11.5px;color:#a8322d;font-weight:600;margin-top:2px}
+.k-ayr{display:none;font-size:11.5px;color:var(--bordo);font-weight:700;margin-top:2px}
 .vur .kk.ayr .k-ayr{display:block}
 .vurgu-sec{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--soluk);margin:0 0 12px;flex-wrap:wrap}
 .vurgu-sec input{accent-color:var(--vurgu)}
-.vurgu-sec .ornek{display:inline-block;width:26px;height:14px;border:1.5px solid #d9534f;background:#fff4f3;border-radius:4px;vertical-align:-3px}
+.vurgu-sec .ornek{display:inline-block;width:26px;height:14px;border:1.5px solid var(--bordo);background:#fbeeef;border-radius:4px;vertical-align:-3px}
 .k-baslik{font-size:12.5px;color:var(--soluk);line-height:1.25;min-height:2.5em}
-.k-deger{font-size:22px;font-weight:600;line-height:1.15;margin-top:2px}
+.k-deger{font-family:var(--slab);font-size:22px;font-weight:700;line-height:1.15;margin-top:2px}
 .k-deger small{font-size:12px;font-weight:400;color:var(--soluk);margin-left:4px}
 .k-donem{align-self:flex-start;font-size:11.5px;color:var(--vurgu-koyu);background:var(--vurgu-acik);border-radius:10px;padding:0 8px;margin:3px 0}
 .k-deg{font-size:12px}
@@ -80,7 +85,7 @@ button,select{font:inherit;color:inherit}
 </head>
 <body>
 <header class="ust"><div class="ust-ic">
-  <div class="marka"><i></i>Mekansal Ayrışma Portalı</div>
+  <div class="marka"><span class="kare" aria-hidden="true"><i></i><i class="b"></i></span>Mekansal Ayrışma Portalı</div>
   <nav class="konular" id="konular" aria-label="Konu başlıkları"></nav>
   <div class="ara"><label for="yerSec" class="sr" style="position:absolute;left:-9999px">İl veya bölge seç</label><select id="yerSec"></select></div>
 </div></header>
@@ -115,7 +120,7 @@ button,select{font:inherit;color:inherit}
 var G=VERI.gostergeler, YER={}, KONULAR=[["nufus","Nüfus ve yapı"],["aile","Aile"],["ekonomi","Ekonomi ve girişim"],["egitim","Eğitim ve kalkınma"]];
 VERI.yerler.forEach(function(y){YER[y.kod]=y});
 YER.TR=YER.TR||{kod:"TR",ad_tr:"Türkiye",duzey:"ulke"};
-var RENK=["#d9eeee","#a9d8d9","#6fbcbe","#2f9a9d","#0b6b6d"];
+var RENK=["#f7e1e2","#eeb3b6","#e0777c","#c63a41","#7b0828"];
 var st={konu:"nufus",gid:null,yil:0,duzey:"il",sec:"TR"};
 var $=function(i){return document.getElementById(i)};
 function fmt(x,d){return x==null?"–":x.toLocaleString("tr-TR",{minimumFractionDigits:d,maximumFractionDigits:d})}
@@ -137,7 +142,7 @@ var P=projeAyar();
 function yolOlustur(f){var d="";var polys=f.geometry.type==="Polygon"?[f.geometry.coordinates]:f.geometry.coordinates;
   polys.forEach(function(p){p.forEach(function(r){r.forEach(function(c,i){var x=(c[0]*P.k-P.mn[0])*P.s,y=(-c[1]-P.mn[1])*P.s;d+=(i?"L":"M")+x.toFixed(1)+" "+y.toFixed(1)});d+="Z"})});return d}
 function haritaCiz(duzey){var s='<svg viewBox="0 0 '+P.w+' '+P.h.toFixed(0)+'" role="img" aria-label="Türkiye '+(duzey==="il"?"il":"bölge")+' haritası">';
-  geo[duzey].features.forEach(function(f){var k=f.properties.kod;s+='<path d="'+yolOlustur(f)+'" data-k="'+k+'" tabindex="0" role="button" aria-label="'+(YER[k]?YER[k].ad_tr:k)+'" fill="#e9edf0"></path>'});
+  geo[duzey].features.forEach(function(f){var k=f.properties.kod;s+='<path d="'+yolOlustur(f)+'" data-k="'+k+'" tabindex="0" role="button" aria-label="'+(YER[k]?YER[k].ad_tr:k)+'" fill="#ececec"></path>'});
   $("harita").innerHTML=s+"</svg>";
   var ip=$("ipucu");
   $("harita").querySelectorAll("path").forEach(function(p){
@@ -151,7 +156,7 @@ function boya(){var g=gOf(st.gid),kk=kodlar(st.duzey),vals=[],pa=$("harita").que
   kk.forEach(function(k){var x=v(g,k,st.yil);if(x!=null)vals.push(x)});
   vals.sort(function(a,b){return a-b});
   var esik=[];for(var i=1;i<5;i++)esik.push(vals.length?vals[Math.min(vals.length-1,Math.floor(vals.length*i/5))]:0);
-  pa.forEach(function(p){var x=v(g,p.dataset.k,st.yil),c="#e9edf0";
+  pa.forEach(function(p){var x=v(g,p.dataset.k,st.yil),c="#ececec";
     if(x!=null){var n=0;while(n<4&&x>=esik[n])n++;c=RENK[n]}
     p.setAttribute("fill",c);p.classList.toggle("sec",p.dataset.k===st.sec)});
   var L=$("lejant");
