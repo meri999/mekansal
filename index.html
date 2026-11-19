@@ -113,9 +113,9 @@ button,select{font:inherit;color:inherit}
 <footer class="alt" id="alt"></footer>
 <div class="ipucu" id="ipucu"></div>
 
-<script src="veri/veri.js?v=20261119213432"></script>
-<script src="veri/harita_il.js?v=20261119213432"></script>
-<script src="veri/harita_bolge.js?v=20261119213432"></script>
+<script src="veri/veri.js?v=20261119214346"></script>
+<script src="veri/harita_il.js?v=20261119214346"></script>
+<script src="veri/harita_bolge.js?v=20261119214346"></script>
 <script>
 (function(){
 var G=VERI.gostergeler, YER={}, KONULAR=[["nufus","Nüfus ve yapı"],["aile","Aile"],["ekonomi","Ekonomi"],["egitim","Eğitim"],["kalkinma","Kalkınma"]];
@@ -163,7 +163,7 @@ function boya(){var g=gOf(st.gid),kk=kodlar(st.duzey),vals=[],pa=$("harita").que
   var L=$("lejant");
   if(!vals.length){L.innerHTML="";$("notHarita").textContent="Bu gösterge "+(st.duzey==="il"?"il":"bölge")+" düzeyinde yayımlanmıyor. Diğer düzeye geçmeyi deneyin."}
   else{L.innerHTML='<span>'+fmt(vals[0],g.ondalik)+'</span><span class="kutu">'+RENK.map(function(c){return '<span style="background:'+c+'"></span>'}).join("")+'</span><span>'+fmt(vals[vals.length-1],g.ondalik)+' '+g.birim+'</span><span>· '+vals.length+' '+(st.duzey==="il"?"il":"bölge")+', beşli eşit sayılı sınıflar</span>';
-    $("notHarita").textContent=g.not||""}}
+    $("notHarita").textContent=(g.not||"")+(g.sonraki?" Veri yılı "+g.yillar[g.yillar.length-1]+"; sonraki güncelleme "+g.sonraki+".":"")}}
 
 /* ---- kutular ---- */
 function sparkSvg(a,i){var y=a.slice(0,i+1).filter(function(x){return x!=null}).slice(-15);if(y.length<2)return "";
@@ -197,7 +197,7 @@ function kutularCiz(){var kod=st.sec,gs=konuG(st.konu).filter(function(g){return
       '<span class="k-donem">'+g.yillar[i]+'</span>'+
       (ay?'<div class="k-ayr">'+(ay.z>0?"▲ ":"▼ ")+bd+' ortalamasının '+(ay.z>0?"çok üstünde":"çok altında")+' (ort. '+fmt(ay.m,g.ondalik)+')</div>':"")+degisim(g,v(g,kod,i),(function(j){return j>=0?v(g,kod,j):null})(onceki(g,kod,i)))+
       (tr!=null?'<div class="k-kars">Türkiye: '+fmt(tr,g.ondalik)+'</div>':"")+sira(g,kod,i)+sparkSvg(g.veri[kod],i)+
-      '<div class="k-kaynak">'+g.kaynak+'</div></button>'});
+      '<div class="k-kaynak">'+g.kaynak+(g.sonraki?' · yıllık, sonraki güncelleme '+g.sonraki:"")+'</div></button>'});
   $("kutular").innerHTML=h+"</div>";
   $("kutular").querySelectorAll(".kk").forEach(function(b){b.addEventListener("click",function(){gosterge(b.dataset.g)})})}
 
