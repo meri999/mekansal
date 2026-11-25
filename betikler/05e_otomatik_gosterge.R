@@ -109,6 +109,11 @@ et <- NULL
 if (file.exists(file.path(PORTAL, "veri/etiket_kod.csv"))) {
   et <- csv_oku("veri/etiket_kod.csv", colClasses = "character")
 }
+# Türkiye düzeyli tabloların etiketleri (04b_etiket_tr.R)
+if (file.exists(file.path(PORTAL, "veri/etiket_tr.csv"))) {
+  et_tr <- csv_oku("veri/etiket_tr.csv", colClasses = "character")
+  et <- if (is.null(et)) et_tr else rbind(et, et_tr[, names(et)])
+}
 
 gostergeler_il <- csv_oku("ayar/gostergeler_il.csv")
 gostergeler_tr <- csv_oku("ayar/gostergeler_tr.csv")
@@ -216,7 +221,7 @@ for (i in seq_len(nrow(tar))) {
   } else {
     komb <- data.frame(x = NA)
   }
-  if (nrow(komb) > 12) {
+  if (nrow(komb) > 30) {
     atlandi(id, sprintf("cok_kombinasyon_%d", nrow(komb)))
     next
   }
