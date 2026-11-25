@@ -1,6 +1,6 @@
 # Mekansal Ayrışma Portalı
 
-Türkiye geneli ile il (81) ve bölge (İBBS-1, 12) düzeyinde nüfus, aile, ekonomi, fiyat, işgücü ve eğitim göstergelerini gösteren statik bir veri portalı. Enstitü Sosyal için hazırlanmıştır.
+Türkiye geneli ile il (81) ve bölge (İBBS-1, 12) düzeyinde nüfus, aile, ekonomi, fiyat, işgücü ve eğitim göstergelerini gösteren statik bir veri portalı.
 
 **Canlı site:** https://meri999.github.io/mekansal/
 
