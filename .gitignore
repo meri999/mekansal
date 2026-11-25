@@ -1,0 +1,16 @@
+# Yalnız bilgisayarda tutulanlar (depoya girmez)
+.Renviron
+/veri/
+/yerel/
+/NOTLAR.md
+/site-lab/
+.claude/
+.mcp.json
+.superpowers/
+
+# Geçici
+*.tmp
+.Rhistory
+*.log
+docs/veri/*.json
+docs/veri/*.geojson

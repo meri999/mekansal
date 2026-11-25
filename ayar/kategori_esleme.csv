@@ -1,0 +1,64 @@
+kategori,konu,grup
+Adrese Dayalı Nüfus Kayıt Sistemi,nufus,Nüfus
+Araştırma-Geliştirme İstatistikleri,kalkinma,Araştırma-geliştirme
+Atık İstatistikleri,yasam,Atık
+Aylık İşgücü İstatistikleri,isgucu,İşgücü piyasası
+Beşeri Kalkınma Endeksi,kalkinma,Beşeri kalkınma
+Boşanma İstatistikleri,nufus,Boşanma
+Bölgesel Hesaplar,uretim,Gelir ve katma değer
+Bölgesel SGP,uretim,Gelir ve katma değer
+"Ciro Endeksleri (Sanayi, İnşaat, Ticaret, Hizmet)",uretim,Üretim ve satış
+Çevresel Ekonomik Hesaplar,yasam,Çevre
+Çocuk İstatistikleri,nufus,Çocuk
+Çocuklarda Bilişim Teknolojileri Kullanım İstatistikleri,egitim,Bilişim
+Devlet Hesapları,kamu,Devlet hesapları
+Dış Ticaret Endeksleri,dis,Dış ticaret endeksleri
+Doğum İstatistikleri,nufus,Doğum
+Dönemsel İşgücü İstatistikleri,isgucu,İşgücü piyasası
+Dünya Nüfus Günü,nufus,Nüfus
+Eğitim Harcamaları İstatistikleri,egitim,Eğitim harcamaları
+Evlenme İstatistikleri,nufus,Evlenme
+Finansal Yatırım Araçlarının Getiri Oranları,finans,Yatırım araçları
+Girişimcilik ve İş Demografisi,girisim,İş demografisi
+Girişimlerde Bilişim Teknolojileri Kullanım İstatistikleri,girisim,Bilişim
+Güven Endeksleri,guven,Güven endeksleri
+Hayvansal Üretim İstatistikleri,tarim,Hayvansal üretim
+Hizmet Üretici Fiyat Endeksi,fiyat,Üretici fiyatları
+İç Göç İstatistikleri,goc,İç göç
+İnşaat Maliyet Endeksi,fiyat,Maliyet endeksleri
+İntihar İstatistikleri,nufus,İntihar
+İş Kayıtları,girisim,İş kayıtları
+İşgücü Girdi Endeksleri,isgucu,İşgücü maliyeti
+Karayolu Trafik Kaza İstatistikleri,yasam,Trafik
+Kazanç Yapısı İstatistikleri,isgucu,İşgücü maliyeti
+Konut ve İş Yeri Satış İstatistikleri,konut,Konut ve taşıt
+Kurumsal Sektör Hesapları,finans,Sektör hesapları
+Mali Aracı Kuruluş İstatistikleri,finans,Mali aracı kuruluşlar
+Motorlu Kara Taşıtları,konut,Konut ve taşıt
+Muhtemel Eğitim Süresi,egitim,Eğitim süresi
+Ölüm ve Ölüm Nedeni İstatistikleri,nufus,Ölüm
+Sanayi Sektörü Nihai Enerji Tüketim İstatistikleri,sanayi,Enerji
+Sanayi Üretici Fiyat Endeksleri,fiyat,Üretici fiyatları
+Sektör Bilançoları,finans,Sektör hesapları
+Sera Gazı Emisyon İstatistikleri,yasam,Çevre
+SGP,uretim,Gelir ve katma değer
+Su ve Atıksu İstatistikleri,yasam,Altyapı
+Süreli Yayın İstatistikleri,kalkinma,Kültür ve yayın
+Tarım Ürünleri Üretici Fiyat Endeksi,fiyat,Üretici fiyatları
+Tarımsal Alet ve Makine İstatistikleri,tarim,Tarımsal makine
+Tarımsal Girdi Fiyat Endeksi,fiyat,Üretici fiyatları
+Tarımsal İşletme İşgücü Ücret Yapısı,tarim,Tarımsal işgücü
+Taşıt-kilometre İstatistikleri,yasam,Trafik
+Ticaret Satış Hacim Endeksi,uretim,Üretim ve satış
+Tüketici Fiyat Endeksi,fiyat,Tüketici fiyatları
+Ulusal Eğitim İstatistikleri,egitim,Eğitim
+Uluslararası Göç İstatistikleri,goc,Uluslararası göç
+Uluslararası Hizmet Ticareti İstatistikleri,dis,Hizmet ticareti
+Ücretli Çalışan İstatistikleri,isgucu,İşgücü piyasası
+Üretim Endeksleri,uretim,Üretim ve satış
+Yenilik İstatistikleri,kalkinma,Yenilik
+Yıllık Sanayi ve Hizmet İstatistikleri,sanayi,Yıllık sanayi ve hizmet
+Yurt Dışı Üretici Fiyat Endeksi,fiyat,Üretici fiyatları
+Yurt İçi Üretici Fiyat Endeksi,fiyat,Üretici fiyatları
+Yükseköğretim Beyin Göçü İstatistikleri,goc,Beyin göçü
+Yükseköğretim İstihdam Göstergeleri,egitim,Yükseköğretim istihdam
