@@ -40,6 +40,10 @@ if (file.exists(oto_yol)) {
   oto <- oto[!is.na(oto$durum) & oto$durum == "yayin", ]
   # elle tanımlı tablolar zaten var; eski taramadan kalan otomatik kopyaları ele
   oto <- oto[!oto$df_id %in% tanim$df_id, ]
+  # elle tanımlı bir göstergeyle aynı başlığa düşen otomatik kopyaları da ele
+  oto <- oto[!paste(oto$konu, oto$grup, oto$baslik, oto$sadece_tr) %in% paste(tanim$konu, tanim$grup, tanim$baslik, tanim$sadece_tr), ]
+  # aynı başlıklı otomatik kopyalardan (örn. aynı tablonun iki kimliği) ilkini tut
+  oto <- oto[!duplicated(paste(oto$konu, oto$grup, oto$baslik, oto$sadece_tr)), ]
   if (nrow(oto)) {
     for (k in setdiff(names(tanim), names(oto))) oto[[k]] <- NA_character_
     oto$sik <- NA_character_
@@ -166,6 +170,25 @@ yeni_olanlar <- function(bm, a) {
 
 # --- göstergeleri üret -------------------------------------------------
 
+# Birimi boş otomatik göstergelerde birimi başlıktan tahmin eder (tahmin yoksa boş)
+birim_tahmin <- function(b) {
+  s <- tolower(b)
+  kural <- list(
+    c("\\(tl\\)|\\btl\\b", "TL"),
+    c("\\(%\\)|yüzde|oranı|payı|\\boran\\b", "%"),
+    c("\\(yıl\\)|süresi", "yıl"),
+    c("\\(ay\\)", "ay"),
+    c("binde|‰|hızı", "‰"),
+    c("endeks", "endeks"),
+    c("hanehalkı|hane sayısı", "hane"),
+    c("girişim", "girişim"),
+    c("nüfus|kişi|ölen|ölü|intihar|mezun|çalışan|işçi", "kişi"),
+    c("kaza", "kaza"),
+    c("belediye|il sayısı|ilçe sayısı|köy sayısı|sayısı|adet", "adet"))
+  for (k in kural) if (grepl(k[1], s)) return(k[2])
+  ""
+}
+
 cikti <- list()
 uyari <- character()
 
@@ -224,7 +247,7 @@ for (i in seq_len(nrow(tanim))) {
     ond <- suppressWarnings(as.numeric(t$ondalik))
     if (is.na(ond)) ond <- if (nrow(a) && max(abs(a$deger)) < 100 && any(a$deger %% 1 != 0)) 2 else 0
 
-    if (isTRUE(t$sadece_tr) && length(unique(a$donem)) < 2) stop("tek gozlem: grafik cizilemez")
+    if (isTRUE(t$sadece_tr) && length(unique(a$donem[a$geo == "TR"])) < 2) stop("Turkiye serisi yok ya da tek gozlem: grafik cizilemez")
     yillar <- sort(unique(a$donem))
     kodlar <- sort(unique(a$geo))
     v <- lapply(setNames(kodlar, kodlar), function(k) {
@@ -241,7 +264,7 @@ for (i in seq_len(nrow(tanim))) {
       konu = t$konu,
       grup = t$grup,
       baslik = t$baslik,
-      birim = if (is.na(t$birim)) "" else t$birim,
+      birim = if (is.na(t$birim) || !nzchar(t$birim)) (if (isTRUE(t$oto)) birim_tahmin(t$baslik) else "") else t$birim,
       ondalik = ond,
       degisim = t$degisim,
       iyi = t$iyi,

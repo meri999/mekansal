@@ -243,7 +243,10 @@ for (i in seq_len(nrow(tar))) {
     if (length(serbest)) {
       ek_f <- paste0(names(serbest), "=", unlist(komb[r, , drop = TRUE]))
       ek_ad <- paste(
-        vapply(names(serbest), function(b) etiket(id, b, komb[r, b]), ""),
+        vapply(names(serbest), function(b) {
+          e <- etiket(id, b, komb[r, b])
+          if (identical(e, komb[r, b])) paste("kod", e) else e
+        }, ""),
         collapse = ", ")
     }
     denemeler[[length(denemeler) + 1]] <-
@@ -285,7 +288,8 @@ for (i in seq_len(nrow(tar))) {
     tr_var <- "TR" %in% x$GEO
 
     baslik <- k$ad_tr
-    if (nzchar(t$ad)) baslik <- paste0(k$ad_tr, " (", t$ad, ")")
+    kisa <- if (nchar(k$ad_tr) <= 60) k$ad_tr else paste0(sub("[[:space:]]+[^[:space:]]*$", "", substr(k$ad_tr, 1, 60)), "…")
+    if (nzchar(t$ad)) baslik <- t$ad
     ondalik <- if (max(x$DEGER) < 100 && any(x$DEGER %% 1 != 0)) 1 else 0
 
     aday[[length(aday) + 1]] <- data.frame(
@@ -302,7 +306,7 @@ for (i in seq_len(nrow(tar))) {
       degisim = "yuzde",
       iyi = "notr",
       kaynak = paste0("TÜİK · ", k$kategori),
-      not = "",
+      not = if (nzchar(t$ad)) k$ad_tr else "",
       ayrisma = "hayir",
       sonraki = NA,
       sadece_tr = il_sayisi == 0 && bolge_sayisi == 0,
@@ -331,6 +335,19 @@ for (i in seq_len(nrow(tar))) {
 
 if (length(aday)) {
   a <- do.call(rbind, aday)
+  # Başlık yalnız etiket. Aynı grupta aynı başlık çıkarsa, çakışanlara tablo adının
+  # başı eklenir; çakışma bitene kadar eklenen kısım 30'ar karakter uzatılır.
+  a$baslik <- trimws(gsub("[[:space:]]+", " ", a$baslik))
+  for (uz in c(30, 60, 90, 1000)) {
+    anahtar <- paste(a$konu, a$grup, a$baslik)
+    kopya <- duplicated(anahtar) | duplicated(anahtar, fromLast = TRUE)
+    i_k <- which(kopya & nzchar(a$not))
+    if (!length(i_k)) break
+    ek <- vapply(a$not[i_k], function(s) {
+      if (nchar(s) <= uz) s else paste0(sub("[[:space:]]+[^[:space:]]*$", "", substr(s, 1, uz)), "…")
+    }, "")
+    a$baslik[i_k] <- paste0(sub(" · .*$", "", a$baslik[i_k]), " · ", ek)
+  }
 
   # --id verildiyse yalnız o tabloları yenile, diğerlerini koru
   if (length(sec) && file.exists(cik)) {
