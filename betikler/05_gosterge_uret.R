@@ -38,6 +38,8 @@ oto_yol <- file.path(PORTAL, "ayar/otomatik_gosterge.csv")
 if (file.exists(oto_yol)) {
   oto <- csv_oku("ayar/otomatik_gosterge.csv", na.strings = NA_DEGER)
   oto <- oto[!is.na(oto$durum) & oto$durum == "yayin", ]
+  # elle tanımlı tablolar zaten var; eski taramadan kalan otomatik kopyaları ele
+  oto <- oto[!oto$df_id %in% tanim$df_id, ]
   if (nrow(oto)) {
     for (k in setdiff(names(tanim), names(oto))) oto[[k]] <- NA_character_
     oto$sik <- NA_character_
@@ -218,11 +220,16 @@ for (i in seq_len(nrow(tanim))) {
     a <- a[!is.na(a$deger), ]
     if (isTRUE(t$sadece_tr)) a <- a[a$donem >= "2010", ]
 
+    # otomatik adaylarda ondalık boş olabilir: veriden türet (NA olursa tüm seri boş çıkar)
+    ond <- suppressWarnings(as.numeric(t$ondalik))
+    if (is.na(ond)) ond <- if (nrow(a) && max(abs(a$deger)) < 100 && any(a$deger %% 1 != 0)) 2 else 0
+
+    if (isTRUE(t$sadece_tr) && length(unique(a$donem)) < 2) stop("tek gozlem: grafik cizilemez")
     yillar <- sort(unique(a$donem))
     kodlar <- sort(unique(a$geo))
     v <- lapply(setNames(kodlar, kodlar), function(k) {
       x <- a[a$geo == k, ]
-      I(round(x$deger[match(yillar, x$donem)], as.numeric(t$ondalik) + 3))
+      I(round(x$deger[match(yillar, x$donem)], ond + 3))
     })
 
     # "sonraki": elle güncellenen (bülten) göstergeler için
@@ -235,7 +242,7 @@ for (i in seq_len(nrow(tanim))) {
       grup = t$grup,
       baslik = t$baslik,
       birim = t$birim,
-      ondalik = as.numeric(t$ondalik),
+      ondalik = ond,
       degisim = t$degisim,
       iyi = t$iyi,
       ayrisma = t$ayrisma,
