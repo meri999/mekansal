@@ -462,6 +462,19 @@ for (uz in c(30, 60, 90, 1000)) {
 cikti <- lapply(cikti, function(g) { g$baglam_gecici <- NULL; g$tablo_adi_gecici <- NULL; g })
 
 
+# --- bölge (İBBS-1) değerini il göstergelerinden türet --------------------
+# Tanımlar ayar/bolge_turet.csv; kurallar ve doğrulama betikler/bolge_turet.R
+source(file.path(PORTAL, "betikler/bolge_turet.R"))
+if (file.exists(file.path(PORTAL, "ayar/bolge_turet.csv"))) {
+  bt <- bolge_uygula(cikti, csv_oku("ayar/bolge_turet.csv", na.strings = character(), colClasses = "character"), il_sayi)
+  cikti <- bt$cikti
+  dir.create(file.path(PORTAL, "veri"), showWarnings = FALSE)
+  write.csv(bt$rapor, file.path(PORTAL, "veri/bolge_turet_rapor.csv"), row.names = FALSE, fileEncoding = "UTF-8")
+  cat(sprintf("Bolge turetme: %d hedef, %d uretildi
+", nrow(bt$rapor), sum(bt$rapor$durum == "üretildi")))
+  print(bt$rapor, row.names = FALSE)
+}
+
 # --- çıktı -------------------------------------------------------------
 
 kullanilan <- unique(unlist(lapply(cikti, function(g) names(g$veri))))
