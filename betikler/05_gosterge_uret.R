@@ -170,6 +170,22 @@ yeni_olanlar <- function(bm, a) {
 
 # --- göstergeleri üret -------------------------------------------------
 
+# ayar/birim_kurallari.csv: (başlık | not) üzerinde regex -> birim (ve isteğe bağlı ek not)
+birim_kurallari <- NULL
+if (file.exists(file.path(PORTAL, "ayar/birim_kurallari.csv"))) {
+  birim_kurallari <- csv_oku("ayar/birim_kurallari.csv", na.strings = character())
+}
+birim_kural <- function(baslik, not) {
+  if (is.null(birim_kurallari)) return(NULL)
+  s <- paste(baslik, if (is.na(not)) "" else not, sep = " | ")
+  for (j in seq_len(nrow(birim_kurallari))) {
+    if (grepl(birim_kurallari$desen[j], s, perl = TRUE, ignore.case = TRUE)) {
+      return(list(birim = birim_kurallari$birim[j], ek_not = birim_kurallari$ek_not[j]))
+    }
+  }
+  NULL
+}
+
 # Birimi boş otomatik göstergelerde birimi başlıktan tahmin eder (tahmin yoksa boş)
 birim_tahmin <- function(b) {
   s <- tolower(b)
@@ -244,6 +260,13 @@ for (i in seq_len(nrow(tanim))) {
     if (isTRUE(t$sadece_tr)) a <- a[a$donem >= "2010", ]
 
     # otomatik adaylarda ondalık boş olabilir: veriden türet (NA olursa tüm seri boş çıkar)
+    # birim: tanımdaki > ayar/birim_kurallari.csv > başlıktan tahmin
+    birim_bos <- is.na(t$birim) || !nzchar(t$birim)
+    kural <- if (isTRUE(t$oto) && birim_bos) birim_kural(t$baslik, t$not) else NULL
+    birim_son <- if (!birim_bos) t$birim else if (!is.null(kural)) kural$birim else if (isTRUE(t$oto)) birim_tahmin(t$baslik) else ""
+    not_son <- if (is.na(t$not)) NULL else t$not
+    if (!is.null(kural) && nzchar(kural$ek_not)) not_son <- paste(c(not_son, kural$ek_not), collapse = " ")
+
     ond <- suppressWarnings(as.numeric(t$ondalik))
     if (is.na(ond)) ond <- if (nrow(a) && max(abs(a$deger)) < 100 && any(a$deger %% 1 != 0)) 2 else 0
 
@@ -264,13 +287,13 @@ for (i in seq_len(nrow(tanim))) {
       konu = t$konu,
       grup = t$grup,
       baslik = t$baslik,
-      birim = if (is.na(t$birim) || !nzchar(t$birim)) (if (isTRUE(t$oto)) birim_tahmin(t$baslik) else "") else t$birim,
+      birim = birim_son,
       ondalik = ond,
       degisim = t$degisim,
       iyi = t$iyi,
       ayrisma = t$ayrisma,
       kaynak = t$kaynak,
-      not = if (is.na(t$not)) NULL else t$not,
+      not = not_son,
       df_id = t$df_id,
       sonraki = sonraki,
       sik = if (is.na(t$sik)) NULL else t$sik,
