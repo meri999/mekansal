@@ -241,7 +241,7 @@ for (i in seq_len(nrow(tanim))) {
       konu = t$konu,
       grup = t$grup,
       baslik = t$baslik,
-      birim = t$birim,
+      birim = if (is.na(t$birim)) "" else t$birim,
       ondalik = ond,
       degisim = t$degisim,
       iyi = t$iyi,
