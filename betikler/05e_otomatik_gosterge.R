@@ -1,5 +1,6 @@
 .f <- sub("^--file=", "", grep("^--file=", commandArgs(FALSE), value = TRUE)[1])
 source(file.path(dirname(normalizePath(.f, winslash = "/")), "yollar.R"))
+source(file.path(dirname(normalizePath(.f, winslash = "/")), "etiket_yardimci.R"))
 
 # veri/tarama.csv'deki tablolardan otomatik gösterge adayları üretir
 # ve ayar/otomatik_gosterge.csv dosyasına yazar.
@@ -86,6 +87,14 @@ karar_uygula <- function(a) {
     }
   }
   if (!"bolge" %in% names(a)) a$bolge <- ""
+  # ayar/etiket_sozluk.csv'de mod "X" olan tablolar siteye alınmaz (belirsiz/karışık)
+  sf <- file.path(PORTAL, "ayar/etiket_sozluk.csv")
+  if (file.exists(sf)) {
+    soz <- csv_oku("ayar/etiket_sozluk.csv", na.strings = character())
+    x_id <- soz$tablo[soz$mod == "X"]
+    x_say <- gsub("^(DF_)+", "", a$df_id) %in% x_id & a$durum == "yayin"
+    a$durum[x_say] <- "dislandi"
+  }
   a
 }
 
@@ -316,6 +325,8 @@ for (i in seq_len(nrow(tar))) {
       ilk = min(x$TIME_PERIOD),
       son = max(x$TIME_PERIOD),
       birim_ham = birim,
+      etiket_ham = t$ad,
+      baglam = "",
       durum = "aday",
       stringsAsFactors = FALSE
     )
@@ -335,19 +346,20 @@ for (i in seq_len(nrow(tar))) {
 
 if (length(aday)) {
   a <- do.call(rbind, aday)
-  # Başlık yalnız etiket. Aynı grupta aynı başlık çıkarsa, çakışanlara tablo adının
-  # başı eklenir; çakışma bitene kadar eklenen kısım 30'ar karakter uzatılır.
-  a$baslik <- trimws(gsub("[[:space:]]+", " ", a$baslik))
-  for (uz in c(30, 60, 90, 1000)) {
-    anahtar <- paste(a$konu, a$grup, a$baslik)
-    kopya <- duplicated(anahtar) | duplicated(anahtar, fromLast = TRUE)
-    i_k <- which(kopya & nzchar(a$not))
-    if (!length(i_k)) break
-    ek <- vapply(a$not[i_k], function(s) {
-      if (nchar(s) <= uz) s else paste0(sub("[[:space:]]+[^[:space:]]*$", "", substr(s, 1, uz)), "…")
-    }, "")
-    a$baslik[i_k] <- paste0(sub(" · .*$", "", a$baslik[i_k]), " · ", ek)
+  # --- başlık kurma (ayar/etiket_sozluk.csv; betikler/etiket_yardimci.R) -----
+  # Başlık = ölçü adı · kırılım. Sözlükte olmayan tablo: etiketin kendisi (E kipi).
+  soz <- csv_oku("ayar/etiket_sozluk.csv", na.strings = character())
+  tablo_anahtar <- gsub("^(DF_)+", "", a$df_id)
+  for (i in seq_len(nrow(a))) {
+    j <- match(tablo_anahtar[i], soz$tablo)
+    s <- if (is.na(j)) NULL else as.list(soz[j, ])
+    a$baslik[i] <- baslik_kur(a$etiket_ham[i], a$baslik[i], s)
+    if (!is.null(s)) a$baglam[i] <- s$baglam
   }
+  a$baslik <- trimws(gsub("[[:space:]]+", " ", a$baslik))
+
+  # Çakışan başlıklar (aynı konu+grup+başlık) kopya elemesinden SONRA 05_gosterge_uret.R'de
+  # çözülür; böylece yalnız yayına giren kartlar bağlam/tablo eki alır.
 
   # --id verildiyse yalnız o tabloları yenile, diğerlerini koru
   if (length(sec) && file.exists(cik)) {

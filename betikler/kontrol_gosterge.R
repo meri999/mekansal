@@ -81,6 +81,22 @@ for (g in G) {
 sadece <- setdiff(names(grup_tr), names(grup_il))
 bilgi <- sprintf("yalnız Türkiye düzeyli alt kategori: %d (il görünümünde menüde boş görünür, tıklanınca Türkiye'ye geçer)", length(sadece))
 
+# --- kart kalitesi kapıları (betikler/kart_denetim.R) ---
+# Birim-etiket çelişkisi (U1-U8), kopya veri (K1) ve çözülmemiş kod etiketi (B1)
+# otomatik kartlarda HATA sayılır; diğer işaretler (başlık biçimi, kesik başlık vb.) UYARI.
+if (is.na(diger) || TRUE) {
+  gizli <- capture.output(source(file.path(dirname(normalizePath(.f, winslash = "/")), "kart_denetim.R"),
+                                 local = new.env()))
+  kd <- read.csv(file.path(PORTAL, "veri", "kart_denetim.csv"), fileEncoding = "UTF-8",
+                 colClasses = "character")
+  agir <- kd$oto == "TRUE" & grepl("(^|[|] )(U[1-8]|K1|B1) ", kd$sorun)
+  for (i in which(agir)) {
+    hata <- c(hata, sprintf("[%s] %s: %s", kd$id[i], substr(kd$baslik[i], 1, 70), kd$sorun[i]))
+  }
+  hafif <- kd$sorun_sayisi != "0" & !agir
+  uyari <- c(uyari, sprintf("[%s] %s: kart denetimi işareti: %s", kd$id[hafif], substr(kd$baslik[hafif], 1, 60), kd$sorun[hafif]))
+}
+
 # --- iki sitenin gösterge kümesi ---
 if (!is.na(diger)) {
   G2 <- oku(diger)
